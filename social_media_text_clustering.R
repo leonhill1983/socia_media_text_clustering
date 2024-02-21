@@ -70,14 +70,21 @@ chr_stp <- function(chr_lst = chr_lst, stp_chr = stp_chr, core_num=detectCores()
 
 integ <- function(chr_lst = chr_lst) {
   
-  ## receives a character set, replaces "<U+064A>" and "<U+0626>" with "<U+06CC>", and returns the integrated character set
+  ## receives a character set, replaces:
+  ## "ي" and "ئ" with "ی"
+  ## "ك" with "ک" 
+  ## "ؤ" with "و"
+  ## "¬" with " " 
+  ##and returns the integrated character set
   
   int <- vector('character', length(chr_lst))
   
   for(i in 1:length(chr_lst)) {
-    str <- str_replace_all(chr_lst[i], "<U+0626>", "<U+06CC>")
-    str <- str_replace_all(str, "<U+064A>", "<U+06CC>")
-    str <- str_replace_all(str, "<U+200C>", " ")
+    str <- str_replace_all(chr_lst[i], "ي", "ی")
+    str <- str_replace_all(str, "ئ", "ی")
+    str <- str_replace_all(str, "ك", "ک")
+    str <- str_replace_all(str, "ؤ", "و")
+    str <- str_replace_all(str, "¬", " ")
     int[i] <- str
   }
   
@@ -91,8 +98,8 @@ plrel_to_sng <- function(chr_lst, plrel_exc, core_num=detectCores()) {
   
   ## receives a set of string and removes 'plural and relative' and 'plural' parts of each string's words if they have meaning (regarding words in the set)
   
-  pl <- c('<U+0647><U+0627>', '<U+0627><U+0646>', '<U+0627><U+062A>')
-  plrel <- pl %R% optional('<U+06CC>') %R% optional('<U+06CC>') %R% optional('<U+06CC>') %R% END    
+  pl <- c('ها', 'ان', 'ات')
+  plrel <- pl %R% optional('ی') %R% optional('ی') %R% optional('ی') %R% END    
   wrds <- unlist(chr_lst)
   
   chr_lst_new <- vector('list', length(chr_lst))
@@ -161,7 +168,7 @@ sim_mat <- function(chr_lst=chr_lst, stp_wrd=stp_wrd, stp_chr=stp_chr, plrel_exc
 
 sim_scr <- function(sim_mat, min, max=1) {
   
-  ## receives the similarity matrix, and returns the indices and the similarity in the desires range
+  ## receives the similarity matrix, and returns the indices and the similarity in the desired range
   
   ind <- which((sim_mat>=min & sim_mat<=max), arr.ind=TRUE)
   scr <- vector('numeric', nrow(ind))
